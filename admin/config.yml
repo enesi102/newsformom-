@@ -2,8 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "news"
-public_folder: "/news"
+media_folder: "news/images"
+public_folder: "/news/images"
 
 collections:
   - name: "news"
@@ -15,31 +15,39 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
-      - label: "Titlu Știre"
+      - label: "Titlu"
         name: "title"
         widget: "string"
 
-      - label: "Data afișării"
+      - label: "Data publicării"
         name: "date"
-        widget: "date"
-        format: "YYYY-MM-DD"
+        widget: "datetime"
+        format: "YYYY-MM-DDTHH:mm:ssZ"
 
       - label: "Categorie"
         name: "category"
         widget: "select"
         options:
-          - "construim"
-          - "invatam"
-          - "cercetam"
+          - label: "🏗️ Construim"
+            value: "construim"
+          - label: "📚 Învățăm"
+            value: "invatam"
+          - label: "🔬 Cercetăm"
+            value: "cercetam"
+
+      - label: "Imagine"
+        name: "image"
+        widget: "image"
+        required: false
 
       - label: "Cuvinte cheie"
         name: "tags"
-        widget: "string"
+        widget: "list"
         required: false
 
-      - label: "Rezumat"
+      - label: "Conținut"
         name: "body"
-        widget: "text"
+        widget: "markdown"
 
       - label: "Link articol original"
         name: "source_url"
