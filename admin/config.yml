@@ -2,19 +2,21 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/images"
-public_folder: "/assets/images"
+media_folder: "stiri"
+public_folder: "/stiri"
 
 collections:
   - name: "stiri"
     label: "Știri"
     folder: "stiri"
     create: true
+    extension: "json"
+    format: "json"
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - {label: "Titlu", name: "title", widget: "string"}
-      - {label: "Data Publicării (Selectată de tine)", name: "date", widget: "date", format: "YYYY-MM-DD"}
+      - {label: "Titlu Știre", name: "title", widget: "string"}
+      - {label: "Data Afișării (Selectată manual)", name: "date", widget: "date", format: "YYYY-MM-DD"}
       - {label: "Categorie", name: "category", widget: "select", options: ["construim", "invatam", "cercetam"]}
-      - {label: "Etichete (separate prin virgula)", name: "tags", widget: "list"}
-      - {label: "Rezumat (Idei principale)", name: "body", widget: "markdown"}
-      - {label: "Link Articol Original", name: "source_url", widget: "string"}
+      - {label: "Cuvinte cheie (separate prin virgulă)", name: "tags", widget: "string", required: false}
+      - {label: "Rezumat", name: "body", widget: "text"}
+      - {label: "Link Articol Original", name: "source_url", widget: "string", required: false}
