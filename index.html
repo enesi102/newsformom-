@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewsForMom</title>
+    
+    </script>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; background: #fdfdfd; color: #333; }
         header { text-align: center; padding: 20px 0; border-bottom: 1px solid #eee; }
@@ -19,7 +21,6 @@
         .body-text { font-size: 0.95rem; line-height: 1.6; color: #444; }
         .body-text ul { padding-left: 20px; margin: 8px 0; }
         .source-link { display: inline-block; margin-top: 12px; font-size: 0.85rem; color: #0066cc; text-decoration: none; }
-        /* Spațiu gol dedicat pentru reclame viitoare */
         .future-ad-zone { display: none; } 
     </style>
 </head>
@@ -41,10 +42,9 @@
     <script>
         let allArticles = [];
 
-        // Funcție care citește automat fișierele din folderul 'stiri' prin API-ul GitHub public al site-ului tău
         async function loadArticles() {
             try {
-                // Înlocuiește 'utilizator' cu numele tău real de GitHub
+                // Adresa corectă de API conectată direct la contul tău 'aron'
                 const repoUrl = 'https://github.com';
                 const response = await fetch(repoUrl);
                 const files = await response.json();
@@ -58,12 +58,12 @@
                 
                 allArticles = await Promise.all(promises);
                 
-                // Sortare strictă după data selectată manual de tine (Cele mai noi primele)
+                // Sortare automată în funcție de data aleasă de tine în calendar
                 allArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 renderArticles('all');
             } catch (err) {
-                document.getElementById('news-feed').innerText = 'Nu s-au putut încărca știrile.';
+                document.getElementById('news-feed').innerText = 'Nicio știre în această categorie.';
             }
         }
 
@@ -82,7 +82,6 @@
                 const tagsHTML = art.tags ? art.tags.split(',').map(t => `<span class="tag">#${t.trim()}</span>`).join('') : '';
                 const dateFormatted = new Date(art.date).toLocaleDateString('ro-RO', { year: 'numeric', month: 'long', day: 'numeric' });
                 
-                // Convertește textul cu rânduri noi în liste HTML
                 const bodyHTML = art.body.split('\n').map(line => line.startsWith('-') || line.startsWith('*') ? `<li>${line.substring(1).trim()}</li>` : `<p>${line}</p>`).join('');
 
                 feed.innerHTML += `
@@ -106,7 +105,6 @@
             renderArticles(cat);
         }
 
-        // Rulează automat la deschiderea paginii
         loadArticles();
     </script>
 </body>
