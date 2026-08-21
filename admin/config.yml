@@ -2,21 +2,46 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "stiri"
-public_folder: "/stiri"
+media_folder: "news"
+public_folder: "/news"
 
 collections:
-  - name: "stiri"
+  - name: "news"
     label: "Știri"
-    folder: "stiri"
+    folder: "news"
     create: true
     extension: "json"
     format: "json"
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+
     fields:
-      - {label: "Titlu Știre", name: "title", widget: "string"}
-      - {label: "Data Afișării (Selectată manual)", name: "date", widget: "date", format: "YYYY-MM-DD"}
-      - {label: "Categorie", name: "category", widget: "select", options: ["construim", "invatam", "cercetam"]}
-      - {label: "Cuvinte cheie (separate prin virgulă)", name: "tags", widget: "string", required: false}
-      - {label: "Rezumat", name: "body", widget: "text"}
-      - {label: "Link Articol Original", name: "source_url", widget: "string", required: false}
+      - label: "Titlu Știre"
+        name: "title"
+        widget: "string"
+
+      - label: "Data afișării"
+        name: "date"
+        widget: "date"
+        format: "YYYY-MM-DD"
+
+      - label: "Categorie"
+        name: "category"
+        widget: "select"
+        options:
+          - "construim"
+          - "invatam"
+          - "cercetam"
+
+      - label: "Cuvinte cheie"
+        name: "tags"
+        widget: "string"
+        required: false
+
+      - label: "Rezumat"
+        name: "body"
+        widget: "text"
+
+      - label: "Link articol original"
+        name: "source_url"
+        widget: "string"
+        required: false
