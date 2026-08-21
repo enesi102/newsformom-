@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsForMom</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; background: #fdfdfd; color: #333; }
+        header { text-align: center; padding: 20px 0; border-bottom: 1px solid #eee; }
+        h1 { margin: 0; font-size: 1.5rem; color: #111; }
+        .filters { display: flex; gap: 8px; margin: 20px 0; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+        .filter-btn { background: #f0f0f0; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .filter-btn.active { background: #222; color: #fff; }
+        .article { background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .meta { font-size: 0.8rem; color: #777; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .article h2 { margin: 0 0 10px 0; font-size: 1.25rem; line-height: 1.4; }
+        .tags-container { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag { background: #eef2f7; color: #4a5568; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; }
+        .body-text { font-size: 0.95rem; line-height: 1.6; color: #444; }
+        .body-text ul { padding-left: 20px; margin: 8px 0; }
+        .source-link { display: inline-block; margin-top: 12px; font-size: 0.85rem; color: #0066cc; text-decoration: none; }
+        /* Spațiu gol dedicat pentru reclame viitoare */
+        .future-ad-zone { display: none; } 
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NewsForMom</h1>
+    </header>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCat('all')">Toate</button>
+        <button class="filter-btn" onclick="filterCat('construim')">🏗️ Construim</button>
+        <button class="filter-btn" onclick="filterCat('invatam')">📚 Învățăm</button>
+        <button class="filter-btn" onclick="filterCat('cercetam')">🔬 Cercetăm</button>
+    </div>
+
+    <div id="news-feed">Încărcare știri...</div>
+
+    <script>
+        let allArticles = [];
+
+        // Funcție care citește automat fișierele din folderul 'stiri' prin API-ul GitHub public al site-ului tău
+        async function loadArticles() {
+            try {
+                // Înlocuiește 'utilizator' cu numele tău real de GitHub
+                const repoUrl = 'https://github.com';
+                const response = await fetch(repoUrl);
+                const files = await response.json();
+                
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+                
+                const promises = jsonFiles.map(async file => {
+                    const res = await fetch(file.download_url);
+                    return await res.json();
+                });
+                
+                allArticles = await Promise.all(promises);
+                
+                // Sortare strictă după data selectată manual de tine (Cele mai noi primele)
+                allArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                renderArticles('all');
+            } catch (err) {
+                document.getElementById('news-feed').innerText = 'Nu s-au putut încărca știrile.';
+            }
+        }
+
+        function renderArticles(category) {
+            const feed = document.getElementById('news-feed');
+            feed.innerHTML = '';
+            
+            const filtered = category === 'all' ? allArticles : allArticles.filter(a => a.category === category);
+            
+            if(filtered.length === 0) {
+                feed.innerHTML = '<p style="text-align:center; color:#777;">Nicio știre în această categorie.</p>';
+                return;
+            }
+
+            filtered.forEach(art => {
+                const tagsHTML = art.tags ? art.tags.split(',').map(t => `<span class="tag">#${t.trim()}</span>`).join('') : '';
+                const dateFormatted = new Date(art.date).toLocaleDateString('ro-RO', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                // Convertește textul cu rânduri noi în liste HTML
+                const bodyHTML = art.body.split('\n').map(line => line.startsWith('-') || line.startsWith('*') ? `<li>${line.substring(1).trim()}</li>` : `<p>${line}</p>`).join('');
+
+                feed.innerHTML += `
+                    <div class="article">
+                        <div class="meta">
+                            <span>${dateFormatted}</span>
+                            <span style="text-transform: uppercase; font-weight:bold;">${art.category}</span>
+                        </div>
+                        <h2>${art.title}</h2>
+                        <div class="tags-container">${tagsHTML}</div>
+                        <div class="body-text">${bodyHTML}</div>
+                        ${art.source_url ? `<a class="source-link" href="${art.source_url}" target="_blank" rel="noopener">Sursa originală ↗</a>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function filterCat(cat) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderArticles(cat);
+        }
+
+        // Rulează automat la deschiderea paginii
+        loadArticles();
+    </script>
+</body>
+</html>
