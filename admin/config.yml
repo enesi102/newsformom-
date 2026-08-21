@@ -5,6 +5,8 @@ backend:
 media_folder: "news/images"
 public_folder: "/news/images"
 
+locale: "ro"
+
 collections:
   - name: "news"
     label: "Știri"
@@ -15,14 +17,17 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
 
     fields:
+
       - label: "Titlu"
         name: "title"
         widget: "string"
 
-      - label: "Data publicării"
+      - label: "Data și ora publicării"
         name: "date"
         widget: "datetime"
         format: "YYYY-MM-DDTHH:mm:ssZ"
+        date_format: "DD.MM.YYYY"
+        time_format: "HH:mm"
 
       - label: "Categorie"
         name: "category"
@@ -35,7 +40,7 @@ collections:
           - label: "🔬 Cercetăm"
             value: "cercetam"
 
-      - label: "Imagine"
+      - label: "Imagine principală"
         name: "image"
         widget: "image"
         required: false
@@ -44,10 +49,32 @@ collections:
         name: "tags"
         widget: "list"
         required: false
+        field:
+          label: "Cuvânt cheie"
+          name: "tag"
+          widget: "string"
 
       - label: "Conținut"
         name: "body"
         widget: "markdown"
+        buttons:
+          - bold
+          - italic
+          - link
+          - bulleted-list
+          - numbered-list
+          - quote
+          - heading-two
+          - heading-three
+
+      - label: "Galerie foto"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field:
+          label: "Fotografie"
+          name: "image"
+          widget: "image"
 
       - label: "Link articol original"
         name: "source_url"
