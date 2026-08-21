@@ -44,8 +44,8 @@
 
         async function loadArticles() {
             try {
-                // Adresa corectă de API conectată direct la contul tău 'aron'
-                const repoUrl = 'https://github.com';
+                // Adresa corectă de API conectată direct la contul tău
+                const repoUrl = 'https://api.github.com/repos/enesi102/newsformom-/contents/news';
                 const response = await fetch(repoUrl);
                 const files = await response.json();
                 
