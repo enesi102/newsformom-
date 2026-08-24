@@ -8,13 +8,23 @@ public_folder: "/news/images"
 locale: "ro"
 
 collections:
+
+  # =========================
+  # ȘTIRI
+  # =========================
+
   - name: "news"
     label: "Știri"
+    label_singular: "Știre"
     folder: "news"
     create: true
     extension: "json"
     format: "json"
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields:
+      fields:
+        - "date"
+        - "title"
 
     fields:
 
@@ -31,14 +41,15 @@ collections:
 
       - label: "Categorie"
         name: "category"
-        widget: "select"
-        options:
-          - label: "🏗️ Construim"
-            value: "construim"
-          - label: "📚 Învățăm"
-            value: "invatam"
-          - label: "🔬 Cercetăm"
-            value: "cercetam"
+        widget: "relation"
+        collection: "categories"
+        search_fields:
+          - "name"
+          - "description"
+        value_field: "slug"
+        display_fields:
+          - "name"
+        options_length: 50
 
       - label: "Imagine principală"
         name: "image"
@@ -80,3 +91,71 @@ collections:
         name: "source_url"
         widget: "string"
         required: false
+
+
+  # =========================
+  # CATEGORII
+  # =========================
+
+  - name: "categories"
+    label: "Categorii"
+    label_singular: "Categorie"
+    folder: "categories"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
+
+    fields:
+
+      - label: "Nume categorie"
+        name: "name"
+        widget: "string"
+
+      - label: "Slug"
+        name: "slug"
+        widget: "string"
+        hint: "Folosește litere mici și fără spații. Exemplu: construim"
+
+      - label: "Icon"
+        name: "icon"
+        widget: "string"
+        required: false
+        hint: "Exemplu: 🏗️"
+
+      - label: "Definiție"
+        name: "description"
+        widget: "text"
+        hint: "Explică exact ce tip de știri aparține acestei categorii."
+
+  # =========================
+  # PAGINI
+  # =========================
+
+  - name: "pages"
+    label: "Pagini"
+    files:
+
+      - label: "Despre NewsForMom"
+        name: "about"
+        file: "content/about.json"
+        fields:
+          - label: "Titlu"
+            name: "title"
+            widget: "string"
+
+          - label: "Misiunea NewsForMom"
+            name: "body"
+            widget: "markdown"
+
+      - label: "Contact"
+        name: "contact"
+        file: "content/contact.json"
+        fields:
+          - label: "Email"
+            name: "email"
+            widget: "string"
+
+          - label: "Text"
+            name: "body"
+            widget: "markdown"
