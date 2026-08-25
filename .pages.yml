@@ -14,9 +14,12 @@ content:
     format: json
     filename: "{year}-{month}-{day}-{title}.json"
     view:
+      fields: [title, date]
       primary: title
-      sort: date
-      order: desc
+      sort: [date]
+      default:
+        sort: date
+        order: desc
     fields:
       - name: title
         label: Titlu
