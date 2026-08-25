@@ -2,160 +2,109 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "news/images"
-public_folder: "/news/images"
+locale: ro
 
-locale: "ro"
+media_folder: "media"
+public_folder: "/media"
+
+site_url: "/"
 
 collections:
 
-  # =========================
-  # ȘTIRI
-  # =========================
+  - name: "site"
+    label: "Site banner"
+    files:
+      - label: "Site banner"
+        name: "banner"
+        file: "content/site/settings.json"
+        fields:
+          - { label: "Banner activ", name: "banner_enabled", widget: "boolean", default: true }
+          - { label: "Titlu banner", name: "banner_title", widget: "string" }
+          - { label: "Text banner", name: "banner_text", widget: "string" }
+          - { label: "Icon", name: "banner_icon", widget: "string", required: false }
 
-  - name: "news"
-    label: "Știri"
-    label_singular: "Știre"
+  - name: "articles"
+    label: "Articles"
     folder: "news"
     create: true
     extension: "json"
     format: "json"
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    sortable_fields:
-      fields:
-        - "date"
-        - "title"
-
     fields:
-
-      - label: "Titlu"
-        name: "title"
-        widget: "string"
-
-      - label: "Data și ora publicării"
-        name: "date"
-        widget: "datetime"
-        format: "YYYY-MM-DDTHH:mm:ssZ"
-        date_format: "DD.MM.YYYY"
-        time_format: "HH:mm"
+      - { label: "Titlu", name: "title", widget: "string" }
+      - { label: "Data publicării", name: "date", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ssZ" }
 
       - label: "Categorie"
         name: "category"
         widget: "relation"
         collection: "categories"
-        search_fields:
-          - "name"
-          - "description"
+        search_fields: ["name", "slug"]
         value_field: "slug"
-        display_fields:
-          - "name"
-        options_length: 50
+        display_fields: ["name"]
 
-      - label: "Imagine principală"
-        name: "image"
-        widget: "image"
-        required: false
+      - { label: "Imagine principală", name: "hero_image", widget: "image", required: false, choose_url: false, media_folder: "/media/news", public_folder: "/media/news" }
+      - { label: "Descriere imagine principală", name: "hero_caption", widget: "string", required: false }
 
       - label: "Cuvinte cheie"
         name: "tags"
         widget: "list"
         required: false
         field:
-          label: "Cuvânt cheie"
-          name: "tag"
-          widget: "string"
+          { label: "Cuvânt cheie", name: "tag", widget: "string" }
 
       - label: "Conținut"
         name: "body"
-        widget: "markdown"
+        widget: "richtext"
         buttons:
           - bold
           - italic
           - link
-          - bulleted-list
-          - numbered-list
-          - quote
           - heading-two
           - heading-three
+          - quote
+          - bulleted-list
+          - numbered-list
+        editor_components:
+          - image
+          - article-image
 
       - label: "Galerie foto"
         name: "gallery"
         widget: "list"
         required: false
-        field:
-          label: "Fotografie"
-          name: "image"
-          widget: "image"
+        fields:
+          - { label: "Fotografie", name: "image", widget: "image", choose_url: false, media_folder: "/media/news", public_folder: "/media/news" }
+          - { label: "Descriere", name: "caption", widget: "string", required: false }
 
-      - label: "Link articol original"
-        name: "source_url"
-        widget: "string"
-        required: false
-
-
-  # =========================
-  # CATEGORII
-  # =========================
+      - { label: "Link articol original", name: "source_url", widget: "string", required: false }
 
   - name: "categories"
-    label: "Categorii"
-    label_singular: "Categorie"
-    folder: "categories"
+    label: "Categories"
+    folder: "content/categories"
     create: true
     extension: "json"
     format: "json"
     slug: "{{slug}}"
-
     fields:
-
-      - label: "Nume categorie"
-        name: "name"
-        widget: "string"
-
-      - label: "Slug"
-        name: "slug"
-        widget: "string"
-        hint: "Folosește litere mici și fără spații. Exemplu: construim"
-
-      - label: "Icon"
-        name: "icon"
-        widget: "string"
-        required: false
-        hint: "Exemplu: 🏗️"
-
-      - label: "Definiție"
-        name: "description"
-        widget: "text"
-        hint: "Explică exact ce tip de știri aparține acestei categorii."
-
-  # =========================
-  # PAGINI
-  # =========================
+      - { label: "Nume categorie", name: "name", widget: "string" }
+      - { label: "Slug", name: "slug", widget: "string" }
+      - { label: "Icon", name: "icon", widget: "string", required: false }
+      - { label: "Definiție", name: "description", widget: "text" }
 
   - name: "pages"
-    label: "Pagini"
+    label: "Pages"
     files:
-
-      - label: "Despre NewsForMom"
+      - label: "About"
         name: "about"
-        file: "content/about.json"
+        file: "content/pages/about.json"
         fields:
-          - label: "Titlu"
-            name: "title"
-            widget: "string"
-
-          - label: "Misiunea NewsForMom"
-            name: "body"
-            widget: "markdown"
+          - { label: "Titlu", name: "title", widget: "string" }
+          - { label: "Conținut", name: "body", widget: "richtext" }
 
       - label: "Contact"
         name: "contact"
-        file: "content/contact.json"
+        file: "content/pages/contact.json"
         fields:
-          - label: "Email"
-            name: "email"
-            widget: "string"
-
-          - label: "Text"
-            name: "body"
-            widget: "markdown"
+          - { label: "Titlu", name: "title", widget: "string" }
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Conținut", name: "body", widget: "richtext" }
