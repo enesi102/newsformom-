@@ -157,6 +157,8 @@ function markdownToHtml(md) {
   // Custom article image blocks are converted first.
   s=s.replace(/&lt;figure class=&quot;article-image&quot;&gt;\s*&lt;img src=&quot;([^&]+)&quot; alt=&quot;([^&]*)&quot;&gt;\s*&lt;figcaption&gt;([\s\S]*?)&lt;\/figcaption&gt;\s*&lt;\/figure&gt;/g,
     '<figure class="article-image"><img src="$1" alt="$2" loading="lazy"><figcaption>$3</figcaption></figure>');
+  s=s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g,
+    (_, alt, src, title) => `<figure class="article-image"><img src="${src}" alt="${alt}" loading="lazy"><figcaption>${title || alt}</figcaption></figure>`);
   s=s.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>");
   s=s.replace(/^> (.*)$/gm,"<blockquote>$1</blockquote>");
   s=s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>");

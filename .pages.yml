@@ -12,9 +12,7 @@ content:
     type: collection
     path: content/news
     format: json
-    filename:
-      template: "{year}-{month}-{day}-{title}.json"
-      field: create
+    filename: "{year}-{month}-{day}-{title}.json"
     view:
       primary: title
       sort: date
