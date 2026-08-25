@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NewsForMom — știri care merită înțelese.">
+  <title>NewsForMom</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#/">NewsForMom</a>
+      <nav class="main-nav" aria-label="Navigare">
+        <a href="#/">Știri</a>
+        <a href="#/about">About</a>
+        <a href="#/contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div id="banner-root"></div>
+
+    <section class="container page-shell">
+      <div id="app"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>NewsForMom</span>
+      <a href="#/about">Despre</a>
+      <a href="#/contact">Contact</a>
+    </div>
+  </footer>
+
+  <div id="lightbox" class="lightbox" hidden aria-modal="true" role="dialog">
+    <button class="lightbox-close" aria-label="Închide">×</button>
+    <button class="lightbox-prev" aria-label="Imaginea anterioară">‹</button>
+    <div class="lightbox-content">
+      <img id="lightbox-image" alt="">
+      <div id="lightbox-caption"></div>
+    </div>
+    <button class="lightbox-next" aria-label="Imaginea următoare">›</button>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
