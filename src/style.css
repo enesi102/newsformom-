@@ -86,6 +86,7 @@ h3{font-size:1.1rem}
 .hero-figure img,.article-body img{width:100%;height:auto;display:block;border-radius:15px}
 figcaption{font-size:.82rem;font-style:italic;color:#747e78;text-align:center;margin-top:8px}
 .article-body{font-size:1.03rem}
+.article-body .article-image{cursor:zoom-in}
 .article-body p{margin:0 0 1.1em}
 .article-body h2{margin:1.6em 0 .6em}
 .article-body h3{margin:1.4em 0 .5em}
@@ -93,9 +94,13 @@ figcaption{font-size:.82rem;font-style:italic;color:#747e78;text-align:center;ma
 .article-body ul,.article-body ol{padding-left:1.3em}
 .article-body a{color:var(--accent)}
 .gallery{margin-top:42px;padding-top:25px;border-top:1px solid var(--line)}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.gallery-item{border:0;padding:0;background:none;cursor:pointer}
-.gallery-item img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px}
+.gallery-carousel{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:10px}
+.gallery-slide{border:0;padding:0;background:none;cursor:zoom-in;text-align:center;color:var(--muted);font:inherit}
+.gallery-slide img{width:100%;max-height:520px;object-fit:contain;border-radius:10px;display:block;background:#eef0f2}
+.gallery-caption{display:block;font-size:.82rem;font-style:italic;margin-top:8px}
+.gallery-arrow{border:1px solid var(--line);background:var(--surface);color:var(--text);width:36px;height:36px;border-radius:50%;font:inherit;font-size:1.5rem;line-height:1;cursor:pointer}
+.gallery-arrow:hover{background:var(--accent-soft)}
+.gallery-count{text-align:center;color:var(--muted);font-size:.78rem;margin-top:8px}
 .page-card{max-width:720px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px}
 .site-footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:.85rem}
 .footer-inner{display:flex;gap:16px;justify-content:center}

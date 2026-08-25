@@ -125,7 +125,6 @@ function renderCard(a) {
   return `<article class="article-card">
     <div class="meta"><span>${formatDate(a.date)}</span><span>${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</span></div>
     <h2><a href="#/article/${encodeURIComponent(a.slug || slugFromTitle(a.title))}">${highlight(a.title)}</a></h2>
-    ${a.tags?.length ? `<div class="tags">${a.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div>` : ""}
     <p class="card-excerpt">${highlight(excerpt)}${excerpt.length>=240?"…":""}</p>
   </article>`;
 }
@@ -141,15 +140,25 @@ function renderArticle(id) {
     <header class="article-header">
       <div class="meta">${formatDate(a.date)} · ${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</div>
       <h1>${esc(a.title)}</h1>
-      ${a.tags?.length?`<div class="tags">${a.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div>`:""}
     </header>
     ${a.hero_image?`<figure class="hero-figure"><img src="${esc(a.hero_image)}" alt="${esc(a.hero_caption||a.title)}" loading="eager"><figcaption>${esc(a.hero_caption||"")}</figcaption></figure>`:""}
     <div class="article-body">${body}</div>
-    ${a.source_url?`<a class="source" href="${esc(a.source_url)}" target="_blank" rel="noopener noreferrer">Sursa originală ↗</a>`:""}
-    ${gallery.length?`<section class="gallery"><h2>Galerie foto</h2><div class="gallery-grid">${gallery.map((g,i)=>`<button class="gallery-item" data-gallery="${i}" aria-label="Deschide fotografia ${i+1}"><img src="${esc(g.image)}" alt="${esc(g.caption||"")}" loading="lazy"></button>`).join("")}</div></section>`:""}
+    ${a.source_url?`<a class="source" href="${esc(a.source_url)}" target="_blank" rel="noopener noreferrer">Surse ↗</a>`:""}
+    ${gallery.length?`<section class="gallery"><h2>Galerie imagini</h2><div class="gallery-carousel"><button class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Imaginea anterioară">‹</button><button class="gallery-slide" data-gallery="0" aria-label="Deschide galeria fullscreen"><img src="${esc(gallery[0].image)}" alt="${esc(gallery[0].caption||"")}" loading="lazy"><span class="gallery-caption">${esc(gallery[0].caption||"")}</span></button><button class="gallery-arrow gallery-next" data-gallery-next aria-label="Imaginea următoare">›</button></div><div class="gallery-count">1 / ${gallery.length}</div></section>`:""}
   </article>`;
   state.currentGallery=gallery;
-  document.querySelectorAll("[data-gallery]").forEach(b=>b.addEventListener("click",()=>openLightbox(Number(b.dataset.gallery))));
+  let carouselIndex=0;
+  const carouselImage=()=>{
+    const item=gallery[carouselIndex];
+    const slide=$(".gallery-slide");
+    slide.querySelector("img").src=item.image;
+    slide.querySelector("img").alt=item.caption||"";
+    slide.querySelector(".gallery-caption").textContent=item.caption||"";
+    $(".gallery-count").textContent=`${carouselIndex+1} / ${gallery.length}`;
+  };
+  document.querySelectorAll("[data-gallery]").forEach(b=>b.addEventListener("click",()=>openLightbox(carouselIndex)));
+  $("[data-gallery-prev]")?.addEventListener("click",()=>{carouselIndex=(carouselIndex-1+gallery.length)%gallery.length;carouselImage();});
+  $("[data-gallery-next]")?.addEventListener("click",()=>{carouselIndex=(carouselIndex+1)%gallery.length;carouselImage();});
   document.querySelectorAll(".article-body img").forEach(img=>img.addEventListener("click",()=>openLightboxFromSrc(img.src)));
 }
 function markdownToHtml(md) {

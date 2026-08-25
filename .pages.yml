@@ -48,11 +48,8 @@ content:
         type: string
       - name: tags
         label: Cuvinte-cheie
-        type: list
-        fields:
-          - name: tag
-            label: Cuvant cheie
-            type: string
+        type: string
+        list: true
       - name: body
         label: Continut
         type: rich-text
@@ -62,8 +59,12 @@ content:
           path: news
           rename: safe
       - name: gallery
-        label: Galerie foto
-        type: list
+        label: Galerie imagini
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "Imagine {index}"
         fields:
           - name: image
             label: Fotografie
@@ -75,7 +76,7 @@ content:
             label: Descriere
             type: string
       - name: source_url
-        label: Link articol original
+        label: Surse
         type: string
 
   - name: categories

@@ -68,7 +68,7 @@ collections:
           - image
           - article-image
 
-      - label: "Galerie foto"
+      - label: "Galerie imagini"
         name: "gallery"
         widget: "list"
         required: false
@@ -76,7 +76,7 @@ collections:
           - { label: "Fotografie", name: "image", widget: "image", choose_url: false, media_folder: "/media/news", public_folder: "/media/news" }
           - { label: "Descriere", name: "caption", widget: "string", required: false }
 
-      - { label: "Link articol original", name: "source_url", widget: "string", required: false }
+      - { label: "Surse", name: "source_url", widget: "string", required: false }
 
   - name: "categories"
     label: "Categories"
