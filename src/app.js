@@ -7,6 +7,7 @@ const state = {
   category: "all",
   query: "",
   searchMode: "both",
+  searchOpen: false,
   currentGallery: [],
   galleryIndex: 0
 };
@@ -48,7 +49,7 @@ function highlight(text) {
   if (!state.query.trim()) return safe;
   const words = state.query.trim().split(/\s+/).filter(Boolean).map(esc);
   const re = new RegExp("(" + words.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|") + ")", "gi");
-  return safe.replace(re,"<mark class="highlight">$1</mark>");
+  return safe.replace(re,'<mark class="highlight">$1</mark>');
 }
 function renderBanner() {
   const s=state.settings;
@@ -60,6 +61,7 @@ function renderBanner() {
 }
 function renderHome() {
   const cats = state.categories;
+  const selectedCategory = categoryBySlug(state.category);
   const filtered = state.articles.filter(a => {
     const catOk = state.category==="all" || a.category===state.category;
     const q = state.query.trim().toLowerCase();
@@ -71,38 +73,51 @@ function renderHome() {
       : state.searchMode==="content" ? hayBody.includes(q)
       : hayTitle.includes(q)||hayBody.includes(q);
   });
+  const emptyMessage = state.query.trim()
+    ? "Nu am găsit articole care să corespundă căutării."
+    : state.category !== "all"
+      ? "În curând, un articol nou te va aștepta aici!"
+      : "În curând, articole noi te vor aștepta aici.";
 
   $("#app").innerHTML = `
     <section>
       <div class="section-heading">
         <div>
-          <h1>Ultimele știri</h1>
-          <p class="lead">Informații care merită înțelese, pe scurt și clar.</p>
+          <h1>Articole recente</h1>
         </div>
       </div>
 
-      <div class="search-row">
-        <input id="search" type="search" placeholder="Caută în titlu și conținut…" value="${esc(state.query)}">
+      <div class="filters" aria-label="Filtrează articolele">
+        <button class="filter ${state.category==="all"?"active":""}" data-cat="all">Toate</button>
+        ${cats.map(c=>`<button class="filter ${state.category===c.slug?"active":""}" data-cat="${esc(c.slug)}">${esc(c.icon||"")} ${esc(c.name)}</button>`).join("")}
+        <button class="search-toggle ${state.searchOpen?"active":""}" id="search-toggle" type="button" aria-label="Caută" aria-expanded="${state.searchOpen}">⌕</button>
+      </div>
+
+      ${selectedCategory ? `<p class="category-description">${esc(selectedCategory.description||"")}</p>` : ""}
+
+      ${state.searchOpen ? `<div class="search-row search-panel">
+        <input id="search" type="search" placeholder="Caută în ${selectedCategory ? esc(selectedCategory.name.toLowerCase()) : "toate articolele"}…" value="${esc(state.query)}">
         <select id="search-mode" aria-label="Unde se caută">
           <option value="both" ${state.searchMode==="both"?"selected":""}>Titlu + conținut</option>
           <option value="title" ${state.searchMode==="title"?"selected":""}>Doar titlu</option>
           <option value="content" ${state.searchMode==="content"?"selected":""}>Doar conținut</option>
         </select>
-      </div>
-
-      <div class="filters">
-        <button class="filter ${state.category==="all"?"active":""}" data-cat="all">Toate</button>
-        ${cats.map(c=>`<button class="filter ${state.category===c.slug?"active":""}" data-cat="${esc(c.slug)}">${esc(c.icon||"")} ${esc(c.name)}</button>`).join("")}
-      </div>
+      </div>` : ""}
 
       <div>
-        ${filtered.length ? filtered.map(renderCard).join("") : `<div class="empty">Nu am găsit știri care să corespundă căutării.</div>`}
+        ${filtered.length ? filtered.map(renderCard).join("") : `<div class="empty">${emptyMessage}</div>`}
       </div>
     </section>`;
 
-  $("#search").addEventListener("input", e => { state.query=e.target.value; renderHome(); });
-  $("#search-mode").addEventListener("change", e => { state.searchMode=e.target.value; renderHome(); });
-  document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{state.category=b.dataset.cat;renderHome();}));
+  $("#search-toggle").addEventListener("click", () => { state.searchOpen = !state.searchOpen; renderHome(); $("#search")?.focus(); });
+  $("#search")?.addEventListener("input", e => { state.query=e.target.value; renderHome(); });
+  $("#search-mode")?.addEventListener("change", e => { state.searchMode=e.target.value; renderHome(); });
+  document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{
+    state.category=b.dataset.cat;
+    state.query="";
+    state.searchOpen=false;
+    renderHome();
+  }));
 }
 function renderCard(a) {
   const cat=categoryBySlug(a.category);
@@ -164,6 +179,11 @@ function route() {
   if(hash.startsWith("/article/")) return renderArticle(decodeURIComponent(hash.slice(9)));
   renderHome();
 }
+document.addEventListener("click", e => {
+  if (!state.searchOpen || e.target.closest(".search-panel") || e.target.closest("#search-toggle")) return;
+  state.searchOpen = false;
+  renderHome();
+});
 function openLightbox(i) {
   if(!state.currentGallery.length)return;
   state.galleryIndex=i;

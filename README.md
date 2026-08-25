@@ -12,7 +12,7 @@ A small, portable, Git-based editorial website.
 
 ## Content
 
-- `news/` — article JSON files.
+- `content/news/` — article JSON files.
 - `content/site/settings.json` — editable site banner.
 - `content/categories/` — category name, icon and definition.
 - `content/pages/` — About and Contact.

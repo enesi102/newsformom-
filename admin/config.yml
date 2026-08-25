@@ -25,7 +25,7 @@ collections:
 
   - name: "articles"
     label: "Articles"
-    folder: "news"
+    folder: "content/news"
     create: true
     extension: "json"
     format: "json"

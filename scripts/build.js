@@ -52,7 +52,7 @@ fs.rmSync(OUT, { recursive:true, force:true });
 ensure(OUT);
 
 copy(path.join(ROOT,"src/index.html"), path.join(OUT,"index.html"));
-copy(path.join(ROOT,"src/styles.css"), path.join(OUT,"styles.css"));
+copy(path.join(ROOT,"src/style.css"), path.join(OUT,"styles.css"));
 copy(path.join(ROOT,"src/app.js"), path.join(OUT,"app.js"));
 copy(path.join(ROOT,"admin/index.html"), path.join(OUT,"admin/index.html"));
 copy(path.join(ROOT,"admin/config.yml"), path.join(OUT,"admin/config.yml"));
@@ -65,7 +65,7 @@ const contact = readJson(path.join(ROOT,"content/pages/contact.json"));
 const categories = walk(path.join(ROOT,"content/categories"))
   .filter(f => f.endsWith(".json")).map(readJson);
 
-const articles = walk(path.join(ROOT,"news"))
+const articles = walk(path.join(ROOT,"content/news"))
   .filter(f => f.endsWith(".json"))
   .map(file => {
     const raw = readJson(file);
