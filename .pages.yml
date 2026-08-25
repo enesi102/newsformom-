@@ -1,0 +1,157 @@
+media:
+  - name: images
+    label: Imagini
+    input: media
+    output: /media
+    rename: safe
+    categories: [image]
+
+content:
+  - name: articles
+    label: Articole
+    type: collection
+    path: content/news
+    format: json
+    filename:
+      template: "{year}-{month}-{day}-{title}.json"
+      field: create
+    view:
+      primary: title
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Titlu
+        type: string
+        required: true
+      - name: date
+        label: Data publicarii
+        type: date
+        required: true
+      - name: category
+        label: Categorie
+        type: reference
+        options:
+          collection: categories
+          search: "name,slug"
+          value: "{slug}"
+          label: "{name}"
+      - name: hero_image
+        label: Imagine principala
+        type: image
+        options:
+          media: images
+          path: news
+      - name: hero_caption
+        label: Descriere imagine principala
+        type: string
+      - name: tags
+        label: Cuvinte-cheie
+        type: list
+        fields:
+          - name: tag
+            label: Cuvant cheie
+            type: string
+      - name: body
+        label: Continut
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+          path: news
+          rename: safe
+      - name: gallery
+        label: Galerie foto
+        type: list
+        fields:
+          - name: image
+            label: Fotografie
+            type: image
+            options:
+              media: images
+              path: news
+          - name: caption
+            label: Descriere
+            type: string
+      - name: source_url
+        label: Link articol original
+        type: string
+
+  - name: categories
+    label: Categorii
+    type: collection
+    path: content/categories
+    format: json
+    filename: "{slug}.json"
+    view:
+      primary: name
+      sort: name
+      order: asc
+    fields:
+      - name: name
+        label: Nume categorie
+        type: string
+        required: true
+      - name: slug
+        label: Slug
+        type: string
+        required: true
+      - name: icon
+        label: Icon
+        type: string
+      - name: description
+        label: Descriere
+        type: text
+        required: true
+
+  - name: pages
+    label: Pagini
+    type: group
+    items:
+      - name: about
+        label: Despre
+        type: file
+        path: content/pages/about.json
+        format: json
+        fields:
+          - name: title
+            label: Titlu
+            type: string
+          - name: body
+            label: Continut
+            type: rich-text
+            options:
+              format: markdown
+      - name: contact
+        label: Contact
+        type: file
+        path: content/pages/contact.json
+        format: json
+        fields:
+          - name: email
+            label: Email
+            type: string
+          - name: body
+            label: Continut
+            type: rich-text
+            options:
+              format: markdown
+
+  - name: site
+    label: Setari site
+    type: file
+    path: content/site/settings.json
+    format: json
+    fields:
+      - name: banner_enabled
+        label: Banner activ
+        type: boolean
+      - name: banner_title
+        label: Titlu banner
+        type: string
+      - name: banner_text
+        label: Text banner
+        type: string
+      - name: banner_icon
+        label: Icon
+        type: string
