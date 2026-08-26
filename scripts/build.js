@@ -54,9 +54,6 @@ ensure(OUT);
 copy(path.join(ROOT,"src/index.html"), path.join(OUT,"index.html"));
 copy(path.join(ROOT,"src/style.css"), path.join(OUT,"styles.css"));
 copy(path.join(ROOT,"src/app.js"), path.join(OUT,"app.js"));
-copy(path.join(ROOT,"admin/index.html"), path.join(OUT,"admin/index.html"));
-copy(path.join(ROOT,"admin/config.yml"), path.join(OUT,"admin/config.yml"));
-copy(path.join(ROOT,"admin/editor-components.js"), path.join(OUT,"admin/editor-components.js"));
 
 const settings = readJson(path.join(ROOT,"content/site/settings.json"));
 const about = readJson(path.join(ROOT,"content/pages/about.json"));

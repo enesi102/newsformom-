@@ -1,0 +1,33 @@
+NewsForMom migration summary
+===========================
+
+Project status: aligned with GitHub + Pages CMS + Cloudflare Pages static deployment.
+
+What changed
+- Removed the obsolete Netlify/Decap admin infrastructure.
+- Kept the content model based on GitHub JSON files and media files.
+- Kept the static build pipeline in scripts/build.js.
+- Kept .pages.yml as the Pages CMS configuration.
+- Updated documentation to describe Cloudflare Pages deployment and portability.
+
+Current architecture
+GitHub repository
+  -> Pages CMS editor
+  -> JSON content + media committed to GitHub
+  -> Cloudflare Pages build
+  -> dist/ static output
+  -> public website
+
+Build command
+npm run build
+
+Production settings in Cloudflare Pages
+- Build command: npm run build
+- Output directory: dist
+- Node version: 20
+
+Important notes
+- The frontend remains static HTML/CSS/JS.
+- No database, server-side app, or persistent runtime is required.
+- The project remains portable to other static hosts.
+- The custom domain is configured in Cloudflare after linking the GitHub repository.
