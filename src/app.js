@@ -96,7 +96,7 @@ function renderHome() {
       ${selectedCategory ? `<p class="category-description">${esc(selectedCategory.description||"")}</p>` : ""}
 
       ${state.searchOpen ? `<div class="search-row search-panel">
-        <input id="search" type="search" placeholder="Caută în ${selectedCategory ? esc(selectedCategory.name.toLowerCase()) : "toate articolele"}…" value="${esc(state.query)}">
+        <input id="search" type="search" placeholder="Caută în ${selectedCategory ? esc(selectedCategory.name) : "toate articolele"}…" value="${esc(state.query)}">
         <select id="search-mode" aria-label="Unde se caută">
           <option value="both" ${state.searchMode==="both"?"selected":""}>Titlu + conținut</option>
           <option value="title" ${state.searchMode==="title"?"selected":""}>Doar titlu</option>

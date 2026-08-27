@@ -59,8 +59,14 @@ const settings = readJson(path.join(ROOT,"content/site/settings.json"));
 const about = readJson(path.join(ROOT,"content/pages/about.json"));
 const contact = readJson(path.join(ROOT,"content/pages/contact.json"));
 
+const categoryOrder = ["construim", "intrebam", "inspiram", "invatam"];
 const categories = walk(path.join(ROOT,"content/categories"))
-  .filter(f => f.endsWith(".json")).map(readJson);
+  .filter(f => f.endsWith(".json"))
+  .map(readJson)
+  .sort((a, b) => {
+    const order = Object.fromEntries(categoryOrder.map((slug, index) => [slug, index]));
+    return (order[a.slug] ?? Number.MAX_SAFE_INTEGER) - (order[b.slug] ?? Number.MAX_SAFE_INTEGER);
+  });
 
 const articles = walk(path.join(ROOT,"content/news"))
   .filter(f => f.endsWith(".json"))
