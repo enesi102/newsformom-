@@ -78,6 +78,7 @@ content:
       - name: source_url
         label: Surse
         type: string
+        list: true
 
   - name: categories
     label: Categorii

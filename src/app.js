@@ -130,12 +130,65 @@ function renderCard(a) {
 }
 function slugFromTitle(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
 
+function normalizeSources(raw) {
+  if (Array.isArray(raw)) {
+    return raw.map(String).map(s => s.trim()).filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    return raw
+      .split(/\r?\n/)
+      .map(s => s.replace(/^[-•*]\s*/, "").trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+function parseSourceEntry(entry) {
+  const value = String(entry || "").trim();
+  const match = value.match(/^(?:([^|:]+?)\s*[-–—|:]\s*)?(https?:\/\/\S+)$/i);
+  if (match) {
+    const label = match[1]?.trim();
+    const url = match[2];
+    return {
+      url,
+      label: label || (() => {
+        try {
+          return new URL(url).hostname.replace(/^www\./, "");
+        } catch {
+          return url;
+        }
+      })()
+    };
+  }
+  if (/^https?:\/\//i.test(value)) {
+    return {
+      url: value,
+      label: (() => {
+        try {
+          return new URL(value).hostname.replace(/^www\./, "");
+        } catch {
+          return value;
+        }
+      })()
+    };
+  }
+  return { url: "#", label: value };
+}
 function renderArticle(id) {
   const a=state.articles.find(x => (x.slug||slugFromTitle(x.title))===id);
   if(!a){ $("#app").innerHTML='<div class="empty">Știrea nu a fost găsită.</div>'; return; }
   const cat=categoryBySlug(a.category);
   const body=markdownToHtml(a.body||"");
   const gallery=a.gallery||[];
+  const sources=normalizeSources(a.source_url);
+  const sourceMarkup=sources.length ? `
+    <section class="sources">
+      <h3>Surse</h3>
+      <ul>${sources.map(item => {
+        const source = parseSourceEntry(item);
+        return `<li><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.label)}</a></li>`;
+      }).join("")}</ul>
+    </section>
+  ` : "";
   $("#app").innerHTML=`<article class="article">
     <header class="article-header">
       <div class="meta">${formatDate(a.date)} · ${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</div>
@@ -143,7 +196,7 @@ function renderArticle(id) {
     </header>
     ${a.hero_image?`<figure class="hero-figure"><img src="${esc(a.hero_image)}" alt="${esc(a.hero_caption||a.title)}" loading="eager"><figcaption>${esc(a.hero_caption||"")}</figcaption></figure>`:""}
     <div class="article-body">${body}</div>
-    ${a.source_url?`<a class="source" href="${esc(a.source_url)}" target="_blank" rel="noopener noreferrer">Surse ↗</a>`:""}
+    ${sourceMarkup}
     ${gallery.length?`<section class="gallery"><h2>Galerie imagini</h2><div class="gallery-carousel"><button class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Imaginea anterioară">‹</button><button class="gallery-slide" data-gallery="0" aria-label="Deschide galeria fullscreen"><img src="${esc(gallery[0].image)}" alt="${esc(gallery[0].caption||"")}" loading="lazy"><span class="gallery-caption">${esc(gallery[0].caption||"")}</span></button><button class="gallery-arrow gallery-next" data-gallery-next aria-label="Imaginea următoare">›</button></div><div class="gallery-count">1 / ${gallery.length}</div></section>`:""}
   </article>`;
   state.currentGallery=gallery;
