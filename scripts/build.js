@@ -59,6 +59,11 @@ const settings = readJson(path.join(ROOT,"content/site/settings.json"));
 const about = readJson(path.join(ROOT,"content/pages/about.json"));
 const contact = readJson(path.join(ROOT,"content/pages/contact.json"));
 
+const authors = walk(path.join(ROOT,"content/authors"))
+  .filter(f => f.endsWith(".json"))
+  .map(readJson)
+  .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
 const categoryOrder = ["construim", "intrebam", "inspiram", "invatam"];
 const categories = walk(path.join(ROOT,"content/categories"))
   .filter(f => f.endsWith(".json"))
@@ -81,6 +86,7 @@ ensure(path.join(OUT,"data"));
 fs.writeFileSync(path.join(OUT,"data/settings.json"), JSON.stringify(settings,null,2));
 fs.writeFileSync(path.join(OUT,"data/about.json"), JSON.stringify(about,null,2));
 fs.writeFileSync(path.join(OUT,"data/contact.json"), JSON.stringify(contact,null,2));
+fs.writeFileSync(path.join(OUT,"data/authors.json"), JSON.stringify(authors,null,2));
 fs.writeFileSync(path.join(OUT,"data/categories.json"), JSON.stringify(categories,null,2));
 fs.writeFileSync(path.join(OUT,"data/articles.json"), JSON.stringify(articles,null,2));
 

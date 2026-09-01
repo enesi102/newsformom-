@@ -1,5 +1,6 @@
 const state = {
   articles: [],
+  authors: [],
   categories: [],
   settings: {},
   about: {},
@@ -15,14 +16,15 @@ const state = {
 const $ = (s) => document.querySelector(s);
 
 async function loadData() {
-  const [settings, about, contact, categories, articles] = await Promise.all([
+  const [settings, about, contact, authors, categories, articles] = await Promise.all([
     fetch("/data/settings.json").then(r=>r.json()),
     fetch("/data/about.json").then(r=>r.json()),
     fetch("/data/contact.json").then(r=>r.json()),
+    fetch("/data/authors.json").then(r=>r.json()),
     fetch("/data/categories.json").then(r=>r.json()),
     fetch("/data/articles.json").then(r=>r.json())
   ]);
-  Object.assign(state, {settings,about,contact,categories,articles});
+  Object.assign(state, {settings,about,contact,authors,categories,articles});
   renderBanner();
   route();
 }
@@ -37,6 +39,9 @@ function formatDate(d) {
 }
 function categoryBySlug(slug) {
   return state.categories.find(c => c.slug === slug);
+}
+function authorBySlug(slug) {
+  return state.authors.find(a => a.slug === slug);
 }
 function plainText(md) {
   return String(md || "")
@@ -62,6 +67,7 @@ function renderBanner() {
 function renderHome() {
   const cats = state.categories;
   const selectedCategory = categoryBySlug(state.category);
+  const hasCategoryArticles = state.category === "all" || state.articles.some(a => a.category === state.category);
   const filtered = state.articles.filter(a => {
     const catOk = state.category==="all" || a.category===state.category;
     const q = state.query.trim().toLowerCase();
@@ -69,9 +75,7 @@ function renderHome() {
     if (!q) return true;
     const hayTitle = String(a.title||"").toLowerCase();
     const hayBody = plainText(a.body).toLowerCase();
-    return state.searchMode==="title" ? hayTitle.includes(q)
-      : state.searchMode==="content" ? hayBody.includes(q)
-      : hayTitle.includes(q)||hayBody.includes(q);
+    return hayTitle.includes(q)||hayBody.includes(q);
   });
   const emptyMessage = state.query.trim()
     ? "Nu am găsit articole care să corespundă căutării."
@@ -87,21 +91,22 @@ function renderHome() {
         </div>
       </div>
 
-      <div class="filters" aria-label="Filtrează articolele">
-        <button class="filter ${state.category==="all"?"active":""}" data-cat="all">Toate</button>
-        ${cats.map(c=>`<button class="filter ${state.category===c.slug?"active":""}" data-cat="${esc(c.slug)}">${esc(c.icon||"")} ${esc(c.name)}</button>`).join("")}
-        <button class="search-toggle ${state.searchOpen?"active":""}" id="search-toggle" type="button" aria-label="Caută" aria-expanded="${state.searchOpen}">⌕</button>
+      <div class="filters-wrap">
+        <button class="filter all-filter ${state.category==="all"?"active":""}" data-cat="all">Toate</button>
+        <div class="filters" aria-label="Filtrează articolele">
+          ${cats.map(c=>`<button class="filter ${state.category===c.slug?"active":""}" data-cat="${esc(c.slug)}">${esc(c.icon||"")} ${esc(c.name)}</button>`).join("")}
+        </div>
       </div>
 
       ${selectedCategory ? `<p class="category-description">${esc(selectedCategory.description||"")}</p>` : ""}
 
-      ${state.searchOpen ? `<div class="search-row search-panel">
-        <input id="search" type="search" placeholder="Caută în ${selectedCategory ? esc(selectedCategory.name) : "toate articolele"}…" value="${esc(state.query)}">
-        <select id="search-mode" aria-label="Unde se caută">
-          <option value="both" ${state.searchMode==="both"?"selected":""}>Titlu + conținut</option>
-          <option value="title" ${state.searchMode==="title"?"selected":""}>Doar titlu</option>
-          <option value="content" ${state.searchMode==="content"?"selected":""}>Doar conținut</option>
-        </select>
+      ${hasCategoryArticles ? `<div class="search-panel">
+        <div class="search-row">
+          <label class="search-field" id="search-field">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="search" type="search" placeholder="Caută" aria-label="Caută în ${selectedCategory ? esc(selectedCategory.name) : "toate articolele"}" value="${esc(state.query)}">
+          </label>
+        </div>
       </div>` : ""}
 
       <div>
@@ -109,22 +114,66 @@ function renderHome() {
       </div>
     </section>`;
 
-  $("#search-toggle").addEventListener("click", () => { state.searchOpen = !state.searchOpen; renderHome(); $("#search")?.focus(); });
-  $("#search")?.addEventListener("input", e => { state.query=e.target.value; renderHome(); });
-  $("#search-mode")?.addEventListener("change", e => { state.searchMode=e.target.value; renderHome(); });
+  const search = $("#search");
+  const searchField = $("#search-field");
+  search?.addEventListener("focus", () => {
+    searchField.classList.add("focused");
+    search.placeholder = `Caută în ${selectedCategory ? selectedCategory.name : "toate articolele"}`;
+  });
+  search?.addEventListener("blur", () => {
+    searchField.classList.remove("focused");
+    search.placeholder = "Caută";
+  });
+  search?.addEventListener("input", e => {
+    state.query=e.target.value;
+    const filtered = state.articles.filter(a => {
+      const catOk = state.category==="all" || a.category===state.category;
+      if (!catOk) return false;
+      const q = state.query.trim().toLowerCase();
+      if (!q) return true;
+      const hayTitle = String(a.title||"").toLowerCase();
+      const hayBody = plainText(a.body).toLowerCase();
+      return hayTitle.includes(q)||hayBody.includes(q);
+    });
+    const cards = document.querySelectorAll(".article-card");
+    cards.forEach(card => {
+      const slug = card.dataset.slug;
+      const visible = filtered.some(a => (a.slug || slugFromTitle(a.title)) === slug);
+      card.style.display = visible ? "" : "none";
+    });
+    const empty = document.querySelector(".empty");
+    if (empty) empty.style.display = filtered.length ? "none" : "block";
+  });
   document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{
     state.category=b.dataset.cat;
     state.query="";
     state.searchOpen=false;
     renderHome();
+    document.querySelector(`[data-cat="${CSS.escape(state.category)}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }));
+  document.querySelectorAll(".article-card").forEach(card => {
+    card.addEventListener("click", e => {
+      if (e.target.closest("a")) return;
+      const slug = card.dataset.slug;
+      if (slug) location.hash = `#/article/${encodeURIComponent(slug)}`;
+    });
+    card.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const slug = card.dataset.slug;
+        if (slug) location.hash = `#/article/${encodeURIComponent(slug)}`;
+      }
+    });
+  });
 }
 function renderCard(a) {
   const cat=categoryBySlug(a.category);
   const excerpt=plainText(a.body).slice(0,240);
-  return `<article class="article-card">
+  const slug = a.slug || slugFromTitle(a.title);
+  return `<article class="article-card" data-slug="${esc(slug)}" tabindex="0" role="link" aria-label="Deschide articolul ${esc(a.title)}">
+    ${a.hero_image ? `<img class="article-card-image" src="${esc(a.hero_image)}" alt="${esc(a.hero_caption||a.title)}" loading="lazy">` : ""}
     <div class="meta"><span>${formatDate(a.date)}</span><span>${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</span></div>
-    <h2><a href="#/article/${encodeURIComponent(a.slug || slugFromTitle(a.title))}">${highlight(a.title)}</a></h2>
+    <h2><a href="#/article/${encodeURIComponent(slug)}">${highlight(a.title)}</a></h2>
     <p class="card-excerpt">${highlight(excerpt)}${excerpt.length>=240?"…":""}</p>
   </article>`;
 }
@@ -159,24 +208,26 @@ function parseSourceEntry(entry) {
       })()
     };
   }
-  if (/^https?:\/\//i.test(value)) {
+  if (/^(?:https?:\/\/)?(?:www\.)?[a-z0-9.-]+\.[a-z]{2,}(?:[/?#][^\s]*)?$/i.test(value)) {
+    const url = /^https?:\/\//i.test(value) ? value : `https://${value}`;
     return {
-      url: value,
+      url,
       label: (() => {
         try {
-          return new URL(value).hostname.replace(/^www\./, "");
+          return new URL(url).hostname.replace(/^www\./, "");
         } catch {
           return value;
         }
       })()
     };
   }
-  return { url: "#", label: value };
+  return null;
 }
 function renderArticle(id) {
   const a=state.articles.find(x => (x.slug||slugFromTitle(x.title))===id);
   if(!a){ $("#app").innerHTML='<div class="empty">Știrea nu a fost găsită.</div>'; return; }
   const cat=categoryBySlug(a.category);
+  const author = authorBySlug(a.author) || { name: "Redacția NFM" };
   const body=markdownToHtml(a.body||"");
   const gallery=a.gallery||[];
   const sources=normalizeSources(a.source_url);
@@ -185,13 +236,16 @@ function renderArticle(id) {
       <h3>Surse</h3>
       <ul>${sources.map(item => {
         const source = parseSourceEntry(item);
+        if (!source) return `<li>${esc(item)}</li>`;
         return `<li><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.label)}</a></li>`;
       }).join("")}</ul>
     </section>
   ` : "";
+  const authorMarkup = `<div class="article-meta-row article-author-row"><span>${esc(author.name)}</span></div>`;
   $("#app").innerHTML=`<article class="article">
     <header class="article-header">
-      <div class="meta">${formatDate(a.date)} · ${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</div>
+      <div class="article-meta-row"><span>${formatDate(a.date)}</span><span>${esc(cat?.icon||"")} ${esc(cat?.name||a.category||"")}</span></div>
+      ${authorMarkup}
       <h1>${esc(a.title)}</h1>
     </header>
     ${a.hero_image?`<figure class="hero-figure"><img src="${esc(a.hero_image)}" alt="${esc(a.hero_caption||a.title)}" loading="eager"><figcaption>${esc(a.hero_caption||"")}</figcaption></figure>`:""}
@@ -243,11 +297,6 @@ function route() {
   if(hash.startsWith("/article/")) return renderArticle(decodeURIComponent(hash.slice(9)));
   renderHome();
 }
-document.addEventListener("click", e => {
-  if (!state.searchOpen || e.target.closest(".search-panel") || e.target.closest("#search-toggle")) return;
-  state.searchOpen = false;
-  renderHome();
-});
 function openLightbox(i) {
   if(!state.currentGallery.length)return;
   state.galleryIndex=i;
