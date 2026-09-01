@@ -54,7 +54,13 @@ h3{font-size:1.1rem}
 .filters-wrap{position:relative;display:flex;align-items:center;gap:8px;margin:22px 0;padding:4px 8px;isolation:isolate}
 .filters-wrap::before{content:"";position:absolute;z-index:-1;inset:0 50%;width:100vw;transform:translateX(-50%);background:#fff}
 .all-filter{flex:0 0 auto}
-.filters{display:flex;gap:8px;overflow:auto;padding:2px 0 7px;flex:1;min-width:0}
+.filters-viewport{position:relative;display:flex;flex:1;min-width:0}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0 7px;flex:1;min-width:0;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.category-indicator{position:absolute;z-index:2;top:50%;display:grid;place-items:center;width:22px;height:28px;transform:translateY(-50%);background:rgba(255,255,255,.92);color:var(--accent);font-size:1.35rem;line-height:1;opacity:0;pointer-events:none;transition:opacity .15s ease}
+.category-indicator.visible{opacity:1}
+.category-indicator-start{left:0}
+.category-indicator-end{right:0}
 .filter{
   flex:0 0 auto;border:0;background:transparent;
   border-radius:0;padding:7px 12px;cursor:pointer;color:var(--muted);font:inherit;font-size:.9rem

@@ -93,8 +93,12 @@ function renderHome() {
 
       <div class="filters-wrap">
         <button class="filter all-filter ${state.category==="all"?"active":""}" data-cat="all">Toate</button>
-        <div class="filters" aria-label="Filtrează articolele">
+        <div class="filters-viewport">
+          <span class="category-indicator category-indicator-start" aria-hidden="true">‹</span>
+          <div class="filters" aria-label="Filtrează articolele">
           ${cats.map(c=>`<button class="filter ${state.category===c.slug?"active":""}" data-cat="${esc(c.slug)}">${esc(c.icon||"")} ${esc(c.name)}</button>`).join("")}
+          </div>
+          <span class="category-indicator category-indicator-end" aria-hidden="true">›</span>
         </div>
       </div>
 
@@ -116,6 +120,16 @@ function renderHome() {
 
   const search = $("#search");
   const searchField = $("#search-field");
+  const filters = $(".filters");
+  const updateCategoryIndicators = () => {
+    if (!filters) return;
+    const maxScroll = filters.scrollWidth - filters.clientWidth;
+    $(".category-indicator-start").classList.toggle("visible", filters.scrollLeft > 1);
+    $(".category-indicator-end").classList.toggle("visible", maxScroll > 1 && filters.scrollLeft < maxScroll - 1);
+  };
+  filters?.addEventListener("scroll", updateCategoryIndicators, { passive: true });
+  window.addEventListener("resize", updateCategoryIndicators, { passive: true });
+  updateCategoryIndicators();
   search?.addEventListener("focus", () => {
     searchField.classList.add("focused");
     search.placeholder = `Caută în ${selectedCategory ? selectedCategory.name : "toate articolele"}`;
