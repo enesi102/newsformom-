@@ -1,0 +1,18 @@
+{
+  "title": "Soneria peștilor",
+  "date": "2026-09-09",
+  "category": "construim",
+  "author": "redactie",
+  "hero_image": "/media/chatgpt-image-sep-9-2026-111302-pm.png",
+  "hero_caption": "Pește așteptând să i se deschidă poarta. Imagine generata de ChatGPT",
+  "body": "În fiecare primăvară, mii de pești înoată prin canalele orașului neerlandez Utrecht încercând să ajungă în râul Kromme Rijn pentru a-și depune icrele. Pe unul dintre canale, o ecluză veche de 200 de ani, Weerdsluis, le blochează trecerea.\n\n## Porți închise\n\nÎncepută ca un baraj pentru prevenirea inundațiilor, construcția s-a transformat ulterior într-o ecluză, adică un mecanism care ridică sau coboară temporar nivelul apei. Ecluza ajută bărcile să treacă de pe o parte pe alta a micului baraj.  \n  \nPorțile ecluzei blochează și trecerea peștilor. Pentru a fi ajutați să treacă, s-a creat o sonerie care să le anunțe prezența la poarta din aval.\n\n## Cum funcționează soneria?\n\nSoneria e activă doar în perioada în care peștii migrează pentru a-și depune icrele.   \nÎn martie-mai, o cameră subacvatică e scufundată la poarta din aval (din jos) a ecluzei. Imaginile surprinse de cameră sunt transmise în direct pe internet.   \nOricine intra pe site poate apăsa butonul soneriei atunci când vede un pește prin “vizor”.\n\n### Prevenirea alarmelor false\n\nCând cineva apasă pe soneria de pe site, se salvează automat o poză care surprinde exact ce era pe cameră în momentul acela.  \nUn sistem automat de recunoaștere a imaginilor elimină pozele în care nu sunt pești.  \nCând mai multe notificări corecte sunt făcute, e anunțat operatorul ecluzei.   \nOperatorul evaluează și el imaginile și decide deschiderea porților.  \n  \nVerificarea este importantă deoarece deschiderea porților se face manual, iar operațiunea necesită timp și mai multe etape.\n\n## Deschiderea porților\n\nPentru a lăsa peștii să treacă se urmează pașii obișnuiți de operare a ecluzei:\n\n- se deschide o poartă;\n- apa și animalele intră în camera ecluzei;\n- poarta se închide;\n- nivelul apei este egalizat;\n- se deschide cealaltă poartă;\n- peștii pot ieși pentru a-și continua drumul.\n\nÎntregul proces durează aproximativ o oră.\n\n## Rolul proiectului\n\nPeștii au un rol important în ecosistemul canalelor. Ei se hrănesc cu insecte, larve și alte organisme mici, iar la rândul lor sunt hrană pentru păsări precum stârcii și cormoranii. Menținerea posibilității de a se deplasa între diferite zone ale canalelor le permite să ajungă la locurile unde se hrănesc și se reproduc și contribuie la funcționarea normală a ecosistemului.  \n  \nImaginile capturate oferă biologilor date importante privind numărul și speciile de pești care traversează zona. În același timp, ele sunt ferestre spre viața subacvatică pentru sutele de mii de oameni care au accesat site-ul în ultimul an, contribuind astfel la educarea și informarea populației generale.",
+  "gallery": [
+    {
+      "image": "/media/20210427-robert-oosterbroek-visdeurbel-07.jpg",
+      "caption": "20210427 Robert Oosterbroek - Visdeurbel 07.JPG. https://visdeurbel.nl/en/press-folder/"
+    }
+  ],
+  "source_url": [
+    "Fish Doorbell. (n.d.). Fish Doorbell. https://visdeurbel.nl/en/"
+  ]
+}
